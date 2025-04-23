@@ -2,6 +2,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { IoEyeOff } from "react-icons/io5";
 import { IoEye } from "react-icons/io5";
+import Link from "next/link";
 
 
 export default function Home() {
@@ -88,6 +89,8 @@ export default function Home() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <Link href="/dashboard" className="text-sm text-white mt-4 text-center block">To Dashboard</Link>
       </div>
     </div>
   )
