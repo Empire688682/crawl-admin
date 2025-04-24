@@ -4,8 +4,8 @@ export default function MainContent() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <StatCard title="Total Songs Uploaded" value="29" sub="21 Singles, 2 Albums, 1 Ep" />
           <StatCard title="Total Purchases" value="950" sub="+12% from last month" />
-          <StatCard title="Revenue This Month" value="₦1,550,000" sub="+8% from last month" />
-          <StatCard title="All-time Revenue" value="₦4,789,000" sub="Since November 2024" />
+          <StatCard title="Revenue This Month" value="₦1.5M" sub="+8% from last month" />
+          <StatCard title="All-time Revenue" value="₦4.7M" sub="Since November 2024" />
         </div>
   
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,7 +52,7 @@ export default function MainContent() {
     return (
       <div className="bg-[#1a1a1a] p-4 rounded-md shadow text-center">
         <h3 className="text-sm text-gray-400">{title}</h3>
-        <p className="text-2xl font-bold mt-1">{value}</p>
+        <p className="text-lg font-bold mt-1">{value}</p>
         <p className="text-xs mt-1 text-green-400">{sub}</p>
       </div>
     )
