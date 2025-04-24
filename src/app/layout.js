@@ -1,6 +1,7 @@
 
 import { AppProvider } from "@/component/Context";
 import "./globals.css";
+import Menubar from "@/component/Menubar/Menubar";
 
 export const metadata = {
   title: "Crawl app admin",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
       className="px-4 md:px-8 bg-[#0e0e0e]"
       >
         <AppProvider>
+          <Menubar />
           {children}
         </AppProvider>
       </body>

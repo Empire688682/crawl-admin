@@ -4,8 +4,8 @@ import { IoMdMenu } from "react-icons/io";
 
 const Menubar = () => {
   return (
-    <div>
-      <IoMdMenu className='text-white text-3xl' />
+    <div className='md:hidden block py-3 '>
+      <IoMdMenu className='text-white cursor-pointer text-3xl' />
     </div>
   )
 }
