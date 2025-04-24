@@ -3,11 +3,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation';
 import { FiHome, FiMusic, FiBarChart2, FiUpload } from 'react-icons/fi';
+import { AiOutlineClose } from "react-icons/ai";
 
 export default function LeftBar() {
   const pathname = usePathname();
   return (
-    <div className="w-64 min-h-screen bg-[#121212] text-white flex flex-col justify-between py-6 px-4">
+    <div className="w-64 min-h-screen relative bg-[#121212] hidden md:block  text-white flex flex-col justify-between py-6 px-4">
+      <AiOutlineClose  className='absolute right-3 top-8 cursor-pointer text-3xl md:hidden'/>
       <div>
         <div className="flex items-center mb-10 space-x-4">
           <Image src="/zayne.png" alt="User" width={40} height={40} className="rounded-full" />
