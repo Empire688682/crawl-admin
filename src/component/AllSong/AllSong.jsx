@@ -27,18 +27,18 @@ const songs = [
             <thead className="text-gray-400 border-b border-gray-700">
               <tr>
                 <th className="py-3">Song Title</th>
-                <th className="py-3">Upload Date</th>
+                <th className="py-3 hidden md:block">Upload Date</th>
                 <th className="py-3">Total Purchases</th>
-                <th className="py-3">Status</th>
+                <th className="py-3 pr-3">Status</th>
               </tr>
             </thead>
             <tbody className="text-sm">
               {songs.map((song, i) => (
                 <tr key={i} className="border-b border-gray-800 hover:bg-gray-900 transition">
                   <td className="py-3">{song.title}</td>
-                  <td className="py-3">{song.date}</td>
+                  <td className="py-3 hidden md:block">{song.date}</td>
                   <td className="py-3">{song.purchases}</td>
-                  <td className="py-3">
+                  <td className="py-3 pr-3">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
                         song.status === 'Live' ? 'bg-green-700 text-white' : 'bg-yellow-700 text-white'
