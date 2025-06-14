@@ -7,7 +7,7 @@ const Page = () => {
     const {userData, router} = useGlobalContext();
     useEffect(()=>{
         if(userData?.token){
-            router.replace("/")
+            router.replace("/dashboard")
         }
     }, [userData]);
     
