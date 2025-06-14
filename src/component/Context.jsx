@@ -10,7 +10,7 @@ export const AppProvider = ({children}) => {
   const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({token:"yes"});
   
   useEffect(() => {
     setShowMenu(false);
