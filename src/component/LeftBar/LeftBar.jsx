@@ -5,7 +5,7 @@ import { FiHome, FiMusic, FiBarChart2, FiUpload, FiLogOut } from 'react-icons/fi
 import { useGlobalContext } from '../Context';
 
 export default function LeftBar() {
-  const {showMenu, pathname, setShowMenu, userData} = useGlobalContext();
+  const {showMenu, pathname, setShowMenu, userData, logoutUser} = useGlobalContext();
   const firstInitial = userData?.username?.trim()?.charAt(0)?.toUpperCase() || "";
 
   return (
@@ -35,7 +35,7 @@ export default function LeftBar() {
         </nav>
       </div>
 
-      <div className='flex items-center mt-10 border-[1px] p-2 rounded-sm max-w-[50%]  cursor-pointer space-x-2 text-sm hover:text-white text-gray-500'>
+      <div onClick={logoutUser} className='flex items-center mt-10 border-[1px] p-2 rounded-sm max-w-[50%]  cursor-pointer space-x-2 text-sm hover:text-white text-gray-500'>
         <FiLogOut className='text-2xl' />
         <span>Logout</span>
       </div>
