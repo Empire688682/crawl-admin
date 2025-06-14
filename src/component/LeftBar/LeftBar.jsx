@@ -6,7 +6,7 @@ import { useGlobalContext } from '../Context';
 
 export default function LeftBar() {
   const {showMenu, pathname, setShowMenu, userData} = useGlobalContext();
-  const firstInitial = userData?.username?.trim()?.chart(0)?.toUpperCase() || "";
+  const firstInitial = userData?.username?.trim()?.charAt(0)?.toUpperCase() || "";
 
   return (
     <div className={`w-64 transition duration-1000 md:translate-x-0 transform ${showMenu ? "translate-x-0 pb-16" : "translate-x-[-140%]"} bg-[#121212] fixed z-50 md:relative text-white flex flex-col justify-between py-6 px-4`}>
