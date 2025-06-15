@@ -347,7 +347,7 @@ const AuthForms = () => {
                   id="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleInputChange}
-                  className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 mt-1"
+                  className="w-6 h-6 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 mt-1"
                   required
                 />
                 <label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-300">
@@ -397,18 +397,6 @@ const AuthForms = () => {
                   className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
                 >
                   <span className="text-white font-bold">G</span>
-                </button>
-                <button
-                  type="button"
-                  className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                >
-                  <Mail className="w-5 h-5 text-white" />
-                </button>
-                <button
-                  type="button"
-                  className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                >
-                  <span className="text-white font-bold">X</span>
                 </button>
               </div>
             )}
