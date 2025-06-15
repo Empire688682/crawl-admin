@@ -76,12 +76,12 @@ const AuthForms = () => {
       const expiredAt = now + threeDays;
 
       const userData = {
-        token: result.token,
-        username: result.user.username,
-        subscription_status: result.user.subscription_status,
-        email: result.user.email,
-        first_name: result.user.first_name,
-        last_name: result.user.last_name,
+        token: result.token || result.ID,
+        username: result.user.username || result.username,
+        subscription_status: result.user.subscription_status || result.subscription_status,
+        email: result.user.email || result.email,
+        first_name: result.user.first_name || result.first_name,
+        last_name: result.user.last_name || result.last_name,
         expiredAt: expiredAt
       };
 
