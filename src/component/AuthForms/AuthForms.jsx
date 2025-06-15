@@ -70,18 +70,19 @@ const AuthForms = () => {
 
   // Helper function to store user data
   const storeUserData = (result) => {
+    console.log("Result1:",  `${isLogin? result.user.username : result.username}`);
     try {
       const now = new Date().getTime();
       const threeDays = 1000 * 60 * 60 * 24 * 3;
       const expiredAt = now + threeDays;
 
       const userData = {
-        token: result.token || result.ID,
-        username: result.user.username || result.username,
-        subscription_status: result.user.subscription_status || result.subscription_status,
-        email: result.user.email || result.email,
-        first_name: result.user.first_name || result.first_name,
-        last_name: result.user.last_name || result.last_name,
+        token: `${isLogin? result.token :  result.ID}`,
+        username: `${isLogin? result.user.username : result.username}`,
+        subscription_status: `${ isLogin? result.user.subscription_status : result.subscription_status}`,
+        email: `${isLogin? result.user.email : result.email}`,
+        first_name: `${isLogin? result.user.first_name : result.first_name}`,
+        last_name: `${isLogin?  result.user.last_name :  result.last_name}`,
         expiredAt: expiredAt
       };
 

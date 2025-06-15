@@ -16,7 +16,7 @@ export default function LeftBar() {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-lg font-bold uppercase">
           {firstInitial}
         </div>
-          <span className="text-lg font-semibold">{userData?.username}</span>
+          <span className="text-lg font-semibold capitalize">{userData?.username}</span>
         </div>
 
         <nav className="flex flex-col space-y-4 gap-9">
