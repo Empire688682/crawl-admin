@@ -130,21 +130,35 @@ const AuthForms = () => {
 
       console.log("response:", response)
       // Check if response is ok first
-      if (response.status !== 200) {
+      if (response.status !== 201) {
         toast.error('Invalid request data');
         return;
       }
 
-      const result = response.data;
+      let result;
+
+      if(isLogin === "Login"){
+        result = response?.data;
+      }else{
+        result = response?.data.Data;
+      }
 
       console.log(`${isLogin ? 'Login' : 'Signup'} result:`, result);
 
       // Check if the response contains the expected data
-      if (result.token && result.user) {
+     if(isLogin === "Login"){
+       if (result.token && result.user) {
         storeUserData(result);
       } else {
         toast.error(response.error || response.message || 'Authentication failed');
       }
+     }else{
+       if (result?.ID && result?.username) {
+        storeUserData(result);
+      } else {
+        toast.error(response.error || response.message || 'Authentication failed');
+      }
+     }
 
     } catch (error) {
       console.error(`${isLogin ? 'Login' : 'Signup'} error:`, error);
