@@ -130,7 +130,7 @@ const AuthForms = () => {
 
       console.log("response:", response)
       // Check if response is ok first
-      if (response.status !== 201 || 200) {
+      if (![200, 200].includes(response.status)) {
         toast.error('Invalid request data');
         return;
       }
