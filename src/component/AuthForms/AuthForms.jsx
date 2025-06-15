@@ -140,7 +140,7 @@ const AuthForms = () => {
       console.log(`${isLogin ? 'Login' : 'Signup'} result:`, result);
 
       // Check if the response contains the expected data
-      if (isLogin === "Login") {
+      if (isLogin) {
         if (result.token && result.user) {
           storeUserData(result);
         } else {
