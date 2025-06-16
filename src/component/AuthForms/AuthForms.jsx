@@ -391,7 +391,7 @@ const AuthForms = () => {
             </div>
 
             {/* Social Login (only for login) */}
-            {isLogin && (
+            {/*isLogin && (
               <div className="flex justify-center space-x-4">
                 <button
                   type="button"
@@ -400,7 +400,7 @@ const AuthForms = () => {
                   <span className="text-white font-bold">G</span>
                 </button>
               </div>
-            )}
+            )*/}
           </div>
 
           {/* Toggle Form */}
