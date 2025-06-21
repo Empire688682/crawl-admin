@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef } from 'react';
+import upload from '../Functions/imageUpload';
 
 export default function UploadSong() {
   const [isAlbum, setIsAlbum] = useState(false);
@@ -19,10 +20,11 @@ export default function UploadSong() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.type.startsWith('image/')) {
+      await upload(file);
       setCoverArt(file);
       setCoverPreview(URL.createObjectURL(file));
     } else if (file.type.startsWith('audio/')) {
