@@ -1,6 +1,6 @@
 "use client"
 import { useState, useRef } from 'react';
-import upload from '../Functions/imageUpload';
+import upload from '../Functions/uploadImage';
 
 export default function UploadSong() {
   const [isAlbum, setIsAlbum] = useState(false);
@@ -15,34 +15,48 @@ export default function UploadSong() {
   const [coverPreview, setCoverPreview] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [audioPreview, setAudioPreview] = useState(null);
+  const [isImgUploading, setIsImgUploading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileSelect = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.type.startsWith('image/')) {
-      await upload(file);
-      setCoverArt(file);
-      setCoverPreview(URL.createObjectURL(file));
-    } else if (file.type.startsWith('audio/')) {
-      setAudioFile(file);
-      setAudioPreview(URL.createObjectURL(file));
+    try {
+      setIsImgUploading(true);
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type.startsWith('image/')) {
+        const imageUrl = await upload(file);
+        setCoverPreview(imageUrl);
+        setCoverArt(imageUrl);
+      } else if (file.type.startsWith('audio/')) {
+        setAudioFile(file);
+        setAudioPreview(URL.createObjectURL(file));
+      }
+    } catch (error) {
+      console.log("handleFileSelect:", error)
+    }
+    finally {
+      setIsImgUploading(false)
     }
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = async (e) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    if (file.type.startsWith('image/')) {
-      setCoverArt(file);
-      setCoverPreview(URL.createObjectURL(file));
-    } else if (file.type.startsWith('audio/')) {
-      setAudioFile(file);
-      setAudioPreview(URL.createObjectURL(file));
+    try {
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      if (file.type.startsWith('image/')) {
+        const imageUrl = await upload(file);
+        setCoverPreview(imageUrl);
+        setCoverArt(imageUrl);
+      } else if (file.type.startsWith('audio/')) {
+        setAudioFile(file);
+        setAudioPreview(URL.createObjectURL(file));
+      }
+    } catch (error) {
+      console.log("handleDrop:", error);
     }
   };
 
@@ -86,6 +100,36 @@ export default function UploadSong() {
           <label htmlFor="fileInput" className="inline-block mt-2 px-4 py-1 bg-gray-700 rounded cursor-pointer">Browse</label>
         </div>
 
+        {/* Preview */}
+        {isImgUploading ? (
+          <div className="flex items-center justify-center gap-2 p-3 rounded-md bg-gray-100 text-sm text-gray-600 w-fit">
+            <svg className="animate-spin h-4 w-4 text-blue-500" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+              />
+            </svg>
+            <span>Uploading image...</span>
+          </div>
+        ) : (
+          coverPreview && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium mb-1">Cover Art Preview:</label>
+              <img src={coverPreview} alt="Upload Preview" className="w-32 h-32 object-cover rounded" />
+            </div>
+          )
+        )}
+
         {/* Title */}
         <div>
           <label className="block text-sm text-white font-medium mb-1">Title</label>
@@ -107,14 +151,6 @@ export default function UploadSong() {
               onChange={handleInputChange}
               className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
             />
-          </div>
-        )}
-
-        {/* Preview */}
-        {coverPreview && (
-          <div className="mt-4">
-            <label className="block text-sm font-medium mb-1">Cover Art Preview:</label>
-            <img src={coverPreview} alt="Preview" className="w-32 h-32 object-cover rounded" />
           </div>
         )}
 
