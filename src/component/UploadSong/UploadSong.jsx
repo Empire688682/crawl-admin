@@ -1,8 +1,14 @@
 "use client"
 import { useState, useRef } from 'react';
-import upload from '../Functions/uploadImage';
+import uploadImage from '../Functions/uploadImage';
+import uploadAudio from '../Functions/uploadAudio';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+import { useGlobalContext } from '../Context';
+import axios from 'axios';
 
 export default function UploadSong() {
+  const {userData} = useGlobalContext();
   const [isAlbum, setIsAlbum] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -10,53 +16,56 @@ export default function UploadSong() {
     genre: '',
     releaseDate: '',
     price: '',
+    duration: ""
   });
   const [coverArt, setCoverArt] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [audioPreview, setAudioPreview] = useState(null);
   const [isImgUploading, setIsImgUploading] = useState(false);
+  const [isAudioUploading, setIsAudioUploading] = useState(false);
+  const [isHandlingUploading, setIsHandlingUploading] = useState(false)
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileSelect = async (e) => {
+  const handleImageSelect = async (e) => {
     try {
       setIsImgUploading(true);
       const file = e.target.files[0];
-      if (!file) return;
-      if (file.type.startsWith('image/')) {
-        const imageUrl = await upload(file);
-        setCoverPreview(imageUrl);
-        setCoverArt(imageUrl);
-      } else if (file.type.startsWith('audio/')) {
-        setAudioFile(file);
-        setAudioPreview(URL.createObjectURL(file));
-      }
+      if (!file || !file.type.startsWith('image/')) return;
+      const imageUrl = await uploadImage(file);
+      setCoverPreview(imageUrl);
+      setCoverArt(imageUrl);
     } catch (error) {
-      console.log("handleFileSelect:", error)
+      console.log("handleImageSelect:", error);
+      toast("Image upload failed, try again.");
+      setCoverArt(null);
+      setCoverPreview(null);
     }
     finally {
-      setIsImgUploading(false)
+      setIsImgUploading(false);
     }
   };
 
-  const handleDrop = async (e) => {
+  const handleImageDrop = async (e) => {
     e.preventDefault();
+    setIsImgUploading(true);
     try {
       const file = e.dataTransfer.files[0];
-      if (!file) return;
-      if (file.type.startsWith('image/')) {
-        const imageUrl = await upload(file);
-        setCoverPreview(imageUrl);
-        setCoverArt(imageUrl);
-      } else if (file.type.startsWith('audio/')) {
-        setAudioFile(file);
-        setAudioPreview(URL.createObjectURL(file));
-      }
+      if (!file || !file.type.startsWith('image/')) return;
+      const imageUrl = await uploadImage(file);
+      setCoverPreview(imageUrl);
+      setCoverArt(imageUrl);
     } catch (error) {
-      console.log("handleDrop:", error);
+      console.log("handleImageDrop:", error);
+      toast("Image upload failed, try again.");
+      setCoverPreview(null);
+      setCoverArt(null);
+    }
+    finally {
+      setIsImgUploading(false);
     }
   };
 
@@ -65,22 +74,88 @@ export default function UploadSong() {
     e.stopPropagation();
   };
 
+  const handleAudioSelect = async (e) => {
+    setIsAudioUploading(true);
+    try {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith("audio/")) return;
+      const audioUrl = await uploadAudio(file);
+      setAudioFile(audioUrl);
+      setAudioPreview(audioUrl);
+    } catch (error) {
+      console.log("handleAudioSelect:", error);
+      toast("Audio upload failed, try again.");
+      setAudioPreview(null);
+      setAudioFile(null);
+    }
+    finally {
+      setIsAudioUploading(false);
+    }
+  };
+
+  const handleUploadSong = async (e) => {
+    e.preventDefault();
+    setIsHandlingUploading(true);
+    console.log("formdata:", formData);
+    if(!formData.title 
+      || !userData.token
+      || !userData.first_name
+      || !formData.genre
+      || !formData.price
+      || !formData.duration
+      || !audioFile
+      || !formData.releaseDate){
+        setIsHandlingUploading(false);
+        return toast.error("All fileds required!")
+      }
+    try {
+      const uploadData = {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        title: formData.title,
+        artist_id: userData.token,
+        artists_names: [
+          userData.first_name,
+          userData.last_name
+        ],
+        genre: formData.genre,
+        price: Number(formData.price),
+        duration: Number(formData.duration),
+        audio_url: audioFile,
+        release_date: formData.releaseDate,
+        album_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        is_purchased: true,
+        created_at: "2025-06-21T22:46:56.019Z",
+        updated_at: "2025-06-21T22:46:56.019Z",
+        deleted_at: "2025-06-21T22:46:56.019Z"
+      }
+      console.log("uploadData:", uploadData);
+      const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "songs")
+      console.log("res:", res);
+      se
+    } catch (error) {
+      console.log("handleUploadSong:", error);
+      toast("Failed to upload song!")
+    }
+    finally {
+      setIsHandlingUploading(false);
+    }
+  }
+
   return (
     <div className="w-full max-w-3xl mx-auto py-10 text-white">
+      <ToastContainer />
       <h1 className="text-2xl font-bold mb-6">Upload Song</h1>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleUploadSong}>
         {/* Type toggle */}
         <div className="flex space-x-4">
           <button
-            type="button"
             onClick={() => setIsAlbum(false)}
             className={`px-4 py-2 rounded ${!isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
           >
             Single
           </button>
           <button
-            type="button"
             onClick={() => setIsAlbum(true)}
             className={`px-4 py-2 rounded ${isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
           >
@@ -90,13 +165,13 @@ export default function UploadSong() {
 
         {/* Drag and Drop Area */}
         <div
-          onDrop={handleDrop}
+          onDrop={handleImageDrop}
           onDragOver={preventDefaults}
           className="w-full border-2 border-dashed border-gray-500 p-6 text-center rounded cursor-pointer"
         >
           <p className="mb-2">Drag & drop your cover or song here</p>
           <p className="text-sm text-gray-400">or click to select manually</p>
-          <input type="file" accept="image/*,audio/*" onChange={handleFileSelect} className="hidden" id="fileInput" />
+          <input type="file" accept="image/*" onChange={handleImageSelect} className="hidden" id="fileInput" />
           <label htmlFor="fileInput" className="inline-block mt-2 px-4 py-1 bg-gray-700 rounded cursor-pointer">Browse</label>
         </div>
 
@@ -128,6 +203,51 @@ export default function UploadSong() {
               <img src={coverPreview} alt="Upload Preview" className="w-32 h-32 object-cover rounded" />
             </div>
           )
+        )}
+
+        {/* Song */}
+
+        <div>
+          <label className="block text-sm text-white font-medium mb-1">Song File (MP3)</label>
+          <input
+            type="file"
+            accept="audio/*"
+            onChange={handleAudioSelect}
+            className="block w-full text-sm text-gray-700 border border-gray-300 rounded-md
+                     file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                     file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700
+                     hover:file:bg-blue-100"
+          />
+        </div>
+
+        {/* Uploading indicator */}
+        {isAudioUploading && (
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm w-fit">
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+              />
+            </svg>
+            Uploading audio…
+          </div>
+        )}
+
+        {audioPreview && (
+          <div className="mt-4">
+            <label className="block text-sm font-medium mb-1">Audio Preview:</label>
+            <audio controls src={audioPreview} className="w-full h-[30px]" />
+          </div>
         )}
 
         {/* Title */}
@@ -189,16 +309,23 @@ export default function UploadSong() {
           />
         </div>
 
-        {audioPreview && (
-          <div className="mt-4">
-            <label className="block text-sm font-medium mb-1">Audio Preview:</label>
-            <audio controls src={audioPreview} className="w-full" />
-          </div>
-        )}
+        {/* Duration */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Duration</label>
+          <input
+            type="text"
+            name="duration"
+            value={formData.duration}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
+          />
+        </div>
 
         {/* Submit Button */}
-        <button type="submit" className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white py-2 rounded">
-          Upload
+        <button disabled={isHandlingUploading} type="submit" className="w-full disabled:bg-gray-300 mt-6 bg-green-500 hover:bg-green-600 text-white py-2 rounded">
+          {
+            isHandlingUploading ? "Uploading....." : "Upload"
+          }
         </button>
       </form>
     </div>

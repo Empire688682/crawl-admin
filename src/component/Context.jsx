@@ -23,10 +23,9 @@ export const AppProvider = ({children}) => {
     else{
       document.body.style.overflow = "unset";
     }
-  }, [showMenu])
+  }, [showMenu]);
 
-  //Auths
-  useEffect(()=>{
+  const checkIsAuthenticated = () =>{
     const now = new Date().getTime();
     if(typeof window !== "undefined"){
       const savedData = localStorage.getItem("CrawlAdmin");
@@ -38,6 +37,11 @@ export const AppProvider = ({children}) => {
         setUserData(parseData);
       }
     }
+  }
+
+  //Auths
+  useEffect(()=>{
+    checkIsAuthenticated()
   }, []);
 
     useEffect(() => {
@@ -60,7 +64,8 @@ export const AppProvider = ({children}) => {
     router,
     publicApiUrl,
     userData,
-    logoutUser
+    logoutUser,
+    checkIsAuthenticated
   }}>
     {children}
     </AppContext.Provider>

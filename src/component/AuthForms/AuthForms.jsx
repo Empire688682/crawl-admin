@@ -8,7 +8,7 @@ import { useGlobalContext } from '../Context';
 import Image from "next/image";
 
 const AuthForms = () => {
-  const { publicApiUrl } = useGlobalContext();
+  const { publicApiUrl, checkIsAuthenticated } = useGlobalContext();
 
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -91,7 +91,7 @@ const AuthForms = () => {
 
       // Small delay to show success message before reload
       setTimeout(() => {
-        window.location.reload();
+        checkIsAuthenticated()
       }, 1000);
     } catch (error) {
       console.error('Error storing user data:', error);
@@ -129,7 +129,6 @@ const AuthForms = () => {
 
       const response = await axios.post(endpoint, requestData);
 
-      console.log("response:", response)
       // Check if response is ok first
       if (![200, 201].includes(response.status)) {
         toast.error('Invalid request data');
@@ -137,8 +136,6 @@ const AuthForms = () => {
       }
 
       const result = isLogin ? response.data : response.data.Data
-
-      console.log(`${isLogin ? 'Login' : 'Signup'} result:`, result);
 
       // Check if the response contains the expected data
       if (isLogin) {
