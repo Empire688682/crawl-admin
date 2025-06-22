@@ -8,7 +8,7 @@ import { useGlobalContext } from '../Context';
 import axios from 'axios';
 
 export default function UploadSong() {
-  const {userData} = useGlobalContext();
+  const { userData } = useGlobalContext();
   const [isAlbum, setIsAlbum] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -97,41 +97,52 @@ export default function UploadSong() {
     e.preventDefault();
     setIsHandlingUploading(true);
     console.log("formdata:", formData);
-    if(!formData.title 
+    if (!formData.title
       || !userData.token
       || !userData.first_name
       || !formData.genre
       || !formData.price
       || !formData.duration
       || !audioFile
-      || !formData.releaseDate){
-        setIsHandlingUploading(false);
-        return toast.error("All fileds required!")
-      }
+      || !formData.releaseDate) {
+      setIsHandlingUploading(false);
+      return toast.error("All fileds required!")
+    }
     try {
       const uploadData = {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         title: formData.title,
-        artist_id: userData.token,
-        artists_names: [
-          userData.first_name,
-          userData.last_name
-        ],
+        artist_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        artists_names: `${userData.first_name,
+          userData.last_name}`,
+        cover_art: coverArt,
         genre: formData.genre,
         price: Number(formData.price),
         duration: Number(formData.duration),
         audio_url: audioFile,
-        release_date: formData.releaseDate,
-        album_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        release_date: "2025-06-11T11:01:42.565Z", //formData.releaseDate,
         is_purchased: true,
-        created_at: "2025-06-21T22:46:56.019Z",
-        updated_at: "2025-06-21T22:46:56.019Z",
-        deleted_at: "2025-06-21T22:46:56.019Z"
+        album_id: null,
+        created_at: "2025-06-11T11:01:42.565Z",
+        updated_at: "2025-06-11T11:01:42.565Z",
+        deleted_at: "2025-06-11T11:01:42.565Z"
       }
       console.log("uploadData:", uploadData);
-      const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "songs")
-      console.log("res:", res);
-      se
+      const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "songs", uploadData)
+      if (res.status === 201) {
+        setFormData({
+          title: '',
+          album: '',
+          genre: '',
+          releaseDate: '',
+          price: '',
+          duration: ""
+        });
+        setAudioFile(null);
+        setAudioPreview(null);
+        setCoverArt(null);
+        setCoverPreview(null);
+        toast.success("Song uploaded successful")
+      }
     } catch (error) {
       console.log("handleUploadSong:", error);
       toast("Failed to upload song!")
