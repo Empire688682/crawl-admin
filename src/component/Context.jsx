@@ -44,11 +44,11 @@ export const AppProvider = ({children}) => {
     checkIsAuthenticated()
   }, []);
 
-   // useEffect(() => {
-   // if (!userData.token) {
-   //   router.replace("/signup");
-  //  }
- // }, [router, pathname]);
+    useEffect(() => {
+    if (!userData.token) {
+      router.replace("/signup");
+    }
+  }, [router, pathname]);
 
   const logoutUser = () =>{
     if(typeof window !== "undefined"){
