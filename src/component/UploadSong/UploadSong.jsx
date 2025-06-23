@@ -113,7 +113,7 @@ export default function UploadSong() {
         title: formData.title,
         artist_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         artists_names: `${userData.first_name,
-          userData.last_name}`,
+        userData.last_name}`,
         cover_art: coverArt,
         genre: formData.genre,
         price: Number(formData.price),
@@ -160,18 +160,18 @@ export default function UploadSong() {
       <form className="space-y-6" onSubmit={handleUploadSong}>
         {/* Type toggle */}
         <div className="flex space-x-4">
-          <button
+          <p
             onClick={() => setIsAlbum(false)}
-            className={`px-4 py-2 rounded ${!isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
+            className={`px-4 py-2 rounded cursor-pointer ${!isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
           >
             Single
-          </button>
-          <button
+          </p>
+          <p
             onClick={() => setIsAlbum(true)}
-            className={`px-4 py-2 rounded ${isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
+            className={`px-4 py-2 rounded cursor-pointer ${isAlbum ? 'bg-white text-black' : 'bg-gray-700'}`}
           >
             Album
-          </button>
+          </p>
         </div>
 
         {/* Drag and Drop Area */}

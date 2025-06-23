@@ -5,6 +5,15 @@
   --foreground: #171717;
 }
 
+/* hide scrollbars – Chrome, Edge, Safari */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* hide scrollbars – Firefox */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

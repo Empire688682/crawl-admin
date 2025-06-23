@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div className='flex gap-4'>
       <LeftBar />
-      <div className='flex-1'>
+      <div className='flex-1 max-h-screen overflow-y-scroll pb-10 no-scrollbar'>
         <Topbar />
         <UploadSong />
       </div>

@@ -9,7 +9,7 @@ export default function LeftBar() {
   const firstInitial = userData?.username?.trim()?.charAt(0)?.toUpperCase() || "";
 
   return (
-    <div className={`w-64 transition duration-1000 md:translate-x-0 transform ${showMenu ? "translate-x-0 pb-16" : "translate-x-[-140%]"} bg-[#121212] fixed z-50 md:relative text-white flex flex-col justify-between py-6 px-4`}>
+    <div className={`w-64 transition h-screen duration-1000 md:translate-x-0 transform ${showMenu ? "translate-x-0 pb-16" : "translate-x-[-140%]"} bg-[#121212] fixed z-50 md:relative text-white flex flex-col justify-between py-6 px-4`}>
       <div>
         <div className="flex items-center mb-10 space-x-4">
           {/* avatar placeholder */}
