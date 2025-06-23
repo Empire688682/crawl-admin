@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios"
 import { useGlobalContext } from '../Context';
-import Image from "next/image";
+import Image from "next/image"
 
 const AuthForms = () => {
   const { publicApiUrl, checkIsAuthenticated } = useGlobalContext();
