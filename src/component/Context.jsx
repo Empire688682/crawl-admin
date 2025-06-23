@@ -48,7 +48,7 @@ export const AppProvider = ({children}) => {
     if (!userData.token) {
       router.replace("/signup");
     }
-  }, [router, pathname]);
+  }, []);
 
   const logoutUser = () =>{
     if(typeof window !== "undefined"){
