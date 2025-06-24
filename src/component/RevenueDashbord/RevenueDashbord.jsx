@@ -7,12 +7,12 @@ export default function RevenueDashbord() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-[#1E1E1E] p-4 rounded-xl shadow-md">
             <p className="text-sm text-gray-400">Revenue This Month</p>
-            <h2 className="text-2xl font-semibold">₦1,550,000</h2>
-            <p className="text-green-500 text-sm mt-1">+8% from last month</p>
+            <h2 className="text-2xl font-semibold">00</h2>
+            <p className="text-green-500 text-sm mt-1">{/*+8% from last month*/}</p>
           </div>
           <div className="bg-[#1E1E1E] p-4 rounded-xl shadow-md">
             <p className="text-sm text-gray-400">All-time Revenue</p>
-            <h2 className="text-2xl font-semibold">₦4,789,000</h2>
+            <h2 className="text-2xl font-semibold">00</h2>
             <p className="text-sm text-gray-500 mt-1">Since November 2024</p>
           </div>
           <div className="bg-[#1E1E1E] p-4 rounded-xl shadow-md flex flex-col justify-between">
@@ -28,7 +28,8 @@ export default function RevenueDashbord() {
           {/* Top Performing Songs */}
           <div className="bg-[#1E1E1E] p-5 rounded-xl shadow-md">
             <h3 className="text-lg font-semibold mb-1">Top performing songs</h3>
-            <p className="text-sm text-gray-400 mb-4">This month's most popular tracks</p>
+            <p>No data available</p>
+            {/*<p className="text-sm text-gray-400 mb-4">This month's most popular tracks</p>
             <ul className="text-sm flex flex-col gap-2">
               <li className="flex justify-between">
                 <span>Late Night Conversations</span>
@@ -59,13 +60,14 @@ export default function RevenueDashbord() {
                 <span>Album: Midnight Echoes</span>
               </li>
             </ul>
-            <button className="mt-4 text-sm text-gray-400 hover:text-white">View all ▾</button>
+            <button className="mt-4 text-sm text-gray-400 hover:text-white">View all ▾</button>*/}
           </div>
   
           {/* Earnings Breakdown */}
           <div className="bg-[#1E1E1E] p-5 rounded-xl shadow-md">
             <h3 className="text-lg font-semibold mb-4">Earnings Breakdown</h3>
-            <p className="text-sm mb-1">Singles</p>
+            <p>No data available</p>
+{/*  <p className="text-sm mb-1">Singles</p>
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-2">
               <div className="h-full w-[66%] bg-orange-400"></div>
             </div>
@@ -75,7 +77,7 @@ export default function RevenueDashbord() {
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-2">
               <div className="h-full w-[49%] bg-green-500"></div>
             </div>
-            <p className="text-sm text-white">₦909,000 <span className="text-gray-400 text-xs">49% of total</span></p>
+            <p className="text-sm text-white">₦909,000 <span className="text-gray-400 text-xs">49% of total</span></p>*/}
           </div>
         </div>
   
@@ -83,7 +85,8 @@ export default function RevenueDashbord() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-[#1E1E1E] p-5 rounded-xl shadow-md">
             <h3 className="text-lg font-semibold mb-4">Tips Received</h3>
-            <div className="mb-4">
+            <p>No data available</p>
+            {/*<div className="mb-4">
               <p className="text-sm text-gray-400">Tips Overview</p>
               <div className="flex justify-between">
                 <span>This Month</span>
@@ -111,7 +114,7 @@ export default function RevenueDashbord() {
                 <span>From: Jane D</span>
                 <span>₦1,000</span>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>

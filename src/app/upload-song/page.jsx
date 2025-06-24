@@ -9,7 +9,7 @@ const page = () => {
       <LeftBar />
       <div className='flex-1 max-h-screen overflow-y-scroll pb-10 no-scrollbar'>
         <Topbar />
-        <UploadSong />
+       <UploadSong />
       </div>
     </div>
   )

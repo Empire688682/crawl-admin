@@ -13,10 +13,10 @@ export default function LeftBar() {
       <div>
         <div className="flex items-center mb-10 space-x-4">
           {/* avatar placeholder */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-lg font-bold uppercase">
+        <div className="flex h-12 w-12 items-center text-black justify-center rounded-full bg-white text-lg font-bold uppercase">
           {firstInitial}
         </div>
-          <span className="text-lg font-semibold capitalize">{userData?.username}</span>
+          <span className="text-lg font-semibold">{userData?.username}</span>
         </div>
 
         <nav className="flex flex-col space-y-4 gap-9">

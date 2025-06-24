@@ -2,26 +2,29 @@ export default function MainContent() {
     return (
       <div className="flex-1 p-8 bg-[#0e0e0e] text-white w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <StatCard title="Total Songs Uploaded" value="29" sub="21 Singles, 2 Albums, 1 Ep" />
-          <StatCard title="Total Purchases" value="950" sub="+12% from last month" />
-          <StatCard title="Revenue This Month" value="₦1.5M" sub="+8% from last month" />
-          <StatCard title="All-time Revenue" value="₦4.7M" sub="Since November 2024" />
+          <StatCard title="Total Songs Uploaded" value="0" sub={""/*"21 Singles, 2 Albums, 1 Ep"*/} />
+          <StatCard title="Total Purchases" value="0" sub={""/*+12% from last month*/} />
+          <StatCard title="Revenue This Month" value="₦0" sub={""/**+8% from last month */} />
+          <StatCard title="All-time Revenue" value="₦0" sub={""/**Since November 2024 */} />
         </div>
   
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[#1a1a1a] p-6 rounded-md shadow-md">
             <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+            <p>No data available</p>
+            {/*
             <ul className="space-y-3 text-sm text-gray-300">
               <li>🎵 You uploaded 4 new vibes on April 2nd, 2025</li>
               <li>🛒 John Doe purchased "Midnight Groove" for ₦1,500</li>
               <li>💰 You earned from ₦95,000 sales today</li>
               <li>📢 Your album "Timeless Journey" is now live</li>
-            </ul>
+            </ul>*/}
           </div>
   
           <div className="bg-[#1a1a1a] p-6 rounded-md shadow-md">
             <h2 className="text-lg font-semibold mb-4">Songs & Purchases</h2>
-            <div className="space-y-4 text-sm">
+            <p>No data available</p>
+            {/*<div className="space-y-4 text-sm">
               <div>
                 <div className="flex justify-between">
                   <span>Monthly Revenue</span>
@@ -41,7 +44,7 @@ export default function MainContent() {
                   <div className="bg-green-400 h-full rounded w-[90%]" />
                 </div>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>
