@@ -14,7 +14,7 @@ export default function AllSong() {
 
   useEffect(()=>{
     fetchAllSongs()
-  },[]);
+  },[loading]);
 
   
 
