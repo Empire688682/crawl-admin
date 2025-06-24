@@ -179,7 +179,7 @@ export default function UploadSong() {
         setCoverPreview(null);
         toast.success("Song uploaded successfully!");
         setTimeout(()=>{
-          router.push("/all-songs")
+        router.push("/all-songs")
         }, 1000);
       }
     } catch (error) {
