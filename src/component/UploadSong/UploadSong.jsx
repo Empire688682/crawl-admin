@@ -8,7 +8,7 @@ import { useGlobalContext } from "../Context";
 import axios from "axios";
 
 export default function UploadSong() {
-  const { userData } = useGlobalContext();
+  const { userData, router } = useGlobalContext();
 
   const [isAlbum, setIsAlbum] = useState(false);
   const [formData, setFormData] = useState({
@@ -144,7 +144,7 @@ export default function UploadSong() {
     try {
       const uploadData = {
         title: formData.title,
-        artist_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        artist_id: userData?.id,
         artists_names: `${userData.first_name} ${userData.last_name}`,
         cover_art: coverPreview,
         genre: formData.genre,
@@ -178,6 +178,9 @@ export default function UploadSong() {
         setCoverArt(null);
         setCoverPreview(null);
         toast.success("Song uploaded successfully!");
+        setTimeout(()=>{
+          router.push("/all-songs")
+        }, 1000);
       }
     } catch (error) {
       console.error("handleUploadSong:", error);

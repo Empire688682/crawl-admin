@@ -9,8 +9,8 @@ const page = () => {
             <LeftBar />
             <div className='flex-1'>
                 <Topbar />
-                <p className='pt-10 text-gray-500'>Opps no song available</p>
-                {/**<AllSong />*/}
+                {/**<p className='pt-10 text-gray-500'>Opps no song available</p>*/}
+                <AllSong />
             </div>
         </div>
     )

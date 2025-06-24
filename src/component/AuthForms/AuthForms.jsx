@@ -78,8 +78,7 @@ const AuthForms = () => {
 
       const userData = {
         token: `${isLogin? result.token :  result.ID}`,
-        result:result,
-        id: `${isLogin? result.token :  result.ID}`,
+        id: `${isLogin? result.user.ID :  result.ID}`,
         username: `${isLogin? result.user.username : result.username}`,
         subscription_status: `${ isLogin? result.user.subscription_status : result.subscription_status}`,
         email: `${isLogin? result.user.email : result.email}`,
@@ -144,14 +143,12 @@ const AuthForms = () => {
       if (isLogin) {
         if (result.token && result.user) {
           storeUserData(result);
-          localStorage.setItem("CrawlAdmin2", JSON.stringify(result));
         } else {
           toast.error(response.error || response.message || 'Authentication failed');
         }
       } else {
         if (result?.ID && result?.username) {
           storeUserData(result);
-          localStorage.setItem("CrawlAdmin2", JSON.stringify(result));
         } else {
           toast.error(response.error || response.message || 'Authentication failed');
         }
