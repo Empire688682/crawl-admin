@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useGlobalContext } from "../Context";
 
 export default function AllSong() {
-  const { userSongs } = useGlobalContext();
+  const { userSongs, fetchAllSongs } = useGlobalContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
@@ -12,9 +12,11 @@ export default function AllSong() {
     }
   },[userSongs]);
 
-  if(userSongs){
-    console.log("userSongs:", userSongs);
-  }
+  useEffect(()=>{
+    fetchAllSongs()
+  },[]);
+
+  
 
   return (
     <div className="flex-1 p-6 text-white bg-[#0f0f0f]">

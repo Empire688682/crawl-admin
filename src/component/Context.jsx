@@ -93,6 +93,7 @@ export const AppProvider = ({children}) => {
     publicApiUrl,
     userData,
     userSongs,
+    fetchAllSongs,
     logoutUser,
     checkIsAuthenticated,
     totalSongByUser, 
