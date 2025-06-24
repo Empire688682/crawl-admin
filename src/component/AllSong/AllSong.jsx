@@ -1,45 +1,20 @@
 "use client";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../Context";
 
 export default function AllSong() {
-  const { publicApiUrl, userData } = useGlobalContext();
-  const [allSongs, setAllSongs] = useState([]);
-  const [userSongs, setUserSongs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { userSongs } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
 
-  const fetchAllSongs = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(publicApiUrl + "songs");
-      if (res.status === 200) {
-        const fetched = res.data.data;
-        console.log("fetched:", fetched);
-        setAllSongs(fetched);
-
-        if (userData?.id) {
-          const filtered = fetched.filter(
-            (song) => song.artist_id === userData.id
-          );
-           console.log("filtered:", filtered);
-           console.log("userDataId:", userData.id);
-          setUserSongs(filtered);
-        }
-      } else {
-        setAllSongs([]);
-        setUserSongs([]);
-      }
-    } catch (err) {
-      console.error("fetchAllSongs error:", err);
-    } finally {
-      setLoading(false);
+  useEffect(()=>{
+    if(userSongs){
+      setLoading(false)
     }
-  };
+  },[userSongs]);
 
-  useEffect(() => {
-    fetchAllSongs();
-  }, []);
+  if(userSongs){
+    console.log("userSongs:", userSongs);
+  }
 
   return (
     <div className="flex-1 p-6 text-white bg-[#0f0f0f]">

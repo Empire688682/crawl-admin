@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import axios from "axios";
 
 const AppContext = React.createContext();
 
@@ -11,6 +12,9 @@ export const AppProvider = ({children}) => {
   const router = useRouter();
 
   const [userData, setUserData] = useState({});
+  const [totalSongByUser, setTotalSongByUser] = useState(0);
+
+  const [userSongs, setUserSongs] = useState([]);
   
   useEffect(() => {
     setShowMenu(false);
@@ -55,7 +59,31 @@ export const AppProvider = ({children}) => {
       localStorage.removeItem("CrawlAdmin");
       window.location.reload();
     }
-  }
+  };
+
+  const fetchAllSongs = async () => {
+    try {
+      const res = await axios.get(publicApiUrl + "songs");
+      if (res.status === 200) {
+        const fetched = res.data.data;
+        if (userData?.id) {
+          const filtered = fetched.filter(
+            (song) => song.artist_id === userData.id
+          );
+           setTotalSongByUser(filtered.length);
+          setUserSongs(filtered);
+        }
+      } else {
+        setUserSongs([]);
+      }
+    } catch (err) {
+      console.error("fetchAllSongs error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllSongs();
+  }, [userData]);
   
   return <AppContext.Provider value={{
     showMenu, 
@@ -64,8 +92,11 @@ export const AppProvider = ({children}) => {
     router,
     publicApiUrl,
     userData,
+    userSongs,
     logoutUser,
-    checkIsAuthenticated
+    checkIsAuthenticated,
+    totalSongByUser, 
+    setTotalSongByUser
   }}>
     {children}
     </AppContext.Provider>

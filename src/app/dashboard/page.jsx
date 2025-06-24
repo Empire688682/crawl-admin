@@ -1,5 +1,5 @@
 import LeftBar from '@/component/LeftBar/LeftBar'
-import MainContent from '@/component/MainContent/MainContent'
+import Dashboard from '@/component/Dashboard/Dashboard'
 import Topbar from '@/component/Topbar/Topbar'
 import React from 'react'
 
@@ -9,7 +9,7 @@ const page = () => {
             <LeftBar />
             <div className='flex-1'>
                 <Topbar />
-                <MainContent />
+                <Dashboard />
             </div>
         </div>
     )
