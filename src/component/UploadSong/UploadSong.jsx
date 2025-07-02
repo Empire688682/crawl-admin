@@ -13,17 +13,19 @@ export default function UploadSong() {
   const [isAlbum, setIsAlbum] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    album: "",
-    genre: "",
+    albumId: "",
+    genreId: "",
     releaseDate: "",
     price: "",
     duration: "",
+    artists_names: [""], // Array of artist names
   });
 
   const [coverArt, setCoverArt] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [audioPreview, setAudioPreview] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null); // For preview audio if different from main audio
   const [isImgUploading, setIsImgUploading] = useState(false);
   const [isAudioUploading, setIsAudioUploading] = useState(false);
   const [isHandlingUploading, setIsHandlingUploading] = useState(false);
@@ -33,15 +35,42 @@ export default function UploadSong() {
     const { name, value } = e.target;
 
     if (name === "releaseDate") {
-      const isoDate = new Date(value).toISOString();
+      // Keep as YYYY-MM-DD format for backend
       setFormData((prev) => ({
         ...prev,
-        [name]: isoDate,
+        [name]: value,
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
+      }));
+    }
+  };
+
+  // Handle artist names array
+  const handleArtistNameChange = (index, value) => {
+    const newArtistNames = [...formData.artists_names];
+    newArtistNames[index] = value;
+    setFormData((prev) => ({
+      ...prev,
+      artists_names: newArtistNames,
+    }));
+  };
+
+  const addArtistName = () => {
+    setFormData((prev) => ({
+      ...prev,
+      artists_names: [...prev.artists_names, ""],
+    }));
+  };
+
+  const removeArtistName = (index) => {
+    if (formData.artists_names.length > 1) {
+      const newArtistNames = formData.artists_names.filter((_, i) => i !== index);
+      setFormData((prev) => ({
+        ...prev,
+        artists_names: newArtistNames,
       }));
     }
   };
@@ -97,8 +126,8 @@ export default function UploadSong() {
       if (!file || !file.type.startsWith("audio/")) return;
       if (
         !file ||
-        file.type !== "audio/mpeg" ||                         // checks MIME type
-        !file.name.toLowerCase().endsWith(".mp3")             // checks file extension
+        file.type !== "audio/mpeg" ||
+        !file.name.toLowerCase().endsWith(".mp3")
       ) {
         toast.error("Only MP3 files are allowed.");
         return;
@@ -106,11 +135,14 @@ export default function UploadSong() {
       const audioUrl = await uploadAudio(file);
       setAudioFile(audioUrl);
       setAudioPreview(audioUrl);
+      // Set preview URL same as main audio by default
+      setPreviewUrl(audioUrl);
     } catch (error) {
       console.error("handleAudioSelect:", error);
       toast.error("Audio upload failed, try again.");
       setAudioPreview(null);
       setAudioFile(null);
+      setPreviewUrl(null);
     } finally {
       setIsAudioUploading(false);
     }
@@ -121,65 +153,69 @@ export default function UploadSong() {
     e.preventDefault();
     setIsHandlingUploading(true);
 
+    // Validation
     if (
       !formData.title ||
       !userData.token ||
-      !userData.first_name ||
-      !formData.genre ||
+      !userData.id ||
+      !formData.genreId ||
       !formData.price ||
       !formData.duration ||
       !audioFile ||
       !formData.releaseDate ||
       !coverArt ||
-      !coverPreview ||
-      !audioFile ||
-      !audioPreview
+      !formData.artists_names.some(name => name.trim())
     ) {
       setIsHandlingUploading(false);
-      return toast.error("All fields required!");
+      return toast.error("All required fields must be filled!");
     }
 
-    const now = new Date().toISOString();
-
     try {
+      // Format data according to backend expectations
       const uploadData = {
         title: formData.title,
-        artist_id: userData?.id,
-        artists_names: `${userData.first_name} ${userData.last_name}`,
-        cover_art: coverPreview,
-        genre: formData.genre,
-        price: Number(formData.price),
+        artistId: userData?.id, // Use artistId instead of artist_id
+        artists_names: formData.artists_names.filter(name => name.trim()), // Filter out empty names
         duration: Number(formData.duration),
-        audio_url: audioFile,
-        release_date: formData.releaseDate,
-        is_purchased: false,
-        album_id: null,
-        created_at: now,
-        updated_at: now,
-        deleted_at: "2025-06-11T11:01:42.565Z",
+        audioUrl: audioFile, // Use audioUrl instead of audio_url
+        genreId: formData.genreId, // Use genreId instead of genre
+        price: Number(formData.price),
+        releaseDate: formData.releaseDate, // Use releaseDate instead of release_date
+        albumId: formData.albumId || null, // Use albumId instead of album_id
+        previewUrl: previewUrl, // Add previewUrl
+        coverImageUrl: coverArt, // Use coverImageUrl instead of cover_art
       };
 
       const res = await axios.post(
         process.env.NEXT_PUBLIC_API_URL + "songs",
-        uploadData
+        uploadData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userData.token}`,
+          }
+        }
       );
 
       if (res.status === 201) {
+        // Reset form
         setFormData({
           title: "",
-          album: "",
-          genre: "",
+          albumId: "",
+          genreId: "",
           releaseDate: "",
           price: "",
           duration: "",
+          artists_names: [""],
         });
         setAudioFile(null);
         setAudioPreview(null);
         setCoverArt(null);
         setCoverPreview(null);
+        setPreviewUrl(null);
         toast.success("Song uploaded successfully!");
-        setTimeout(()=>{
-        router.push("/all-songs")
+        setTimeout(() => {
+          router.push("/all-songs")
         }, 1000);
       }
     } catch (error) {
@@ -205,15 +241,14 @@ export default function UploadSong() {
           >
             Single
           </p>
-          {/* Album toggle (if needed) */}
-          {/* <p
+          <p
             onClick={() => setIsAlbum(true)}
             className={`px-4 py-2 rounded cursor-pointer ${
               isAlbum ? "bg-white text-black" : "bg-gray-700"
             }`}
           >
             Album
-          </p> */}
+          </p>
         </div>
 
         {/* Cover upload */}
@@ -222,7 +257,7 @@ export default function UploadSong() {
           onDragOver={preventDefaults}
           className="w-full border-2 border-dashed border-gray-500 p-6 text-center rounded cursor-pointer"
         >
-          <p className="mb-2">Drag & drop your cover or song here</p>
+          <p className="mb-2">Drag & drop your cover image here</p>
           <p className="text-sm text-gray-400">or click to select manually</p>
           <input
             type="file"
@@ -292,68 +327,108 @@ export default function UploadSong() {
 
         {/* Form fields */}
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium mb-1">Title *</label>
           <input
             name="title"
             value={formData.title}
             onChange={handleInputChange}
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
+            required
           />
+        </div>
+
+        {/* Artist Names */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Artist Names *</label>
+          {formData.artists_names.map((name, index) => (
+            <div key={index} className="flex gap-2 mb-2">
+              <input
+                value={name}
+                onChange={(e) => handleArtistNameChange(index, e.target.value)}
+                placeholder={`Artist ${index + 1} name`}
+                className="flex-1 px-4 py-2 bg-gray-800 rounded border border-gray-600"
+                required={index === 0}
+              />
+              {formData.artists_names.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeArtistName(index)}
+                  className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addArtistName}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Add Another Artist
+          </button>
         </div>
 
         {isAlbum && (
           <div>
-            <label className="block text-sm font-medium mb-1">Album Name</label>
+            <label className="block text-sm font-medium mb-1">Album ID</label>
             <input
-              name="album"
-              value={formData.album}
+              name="albumId"
+              value={formData.albumId}
               onChange={handleInputChange}
+              placeholder="urn:uuid:example-album-id"
               className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium mb-1">Genre</label>
+          <label className="block text-sm font-medium mb-1">Genre ID *</label>
           <input
-            name="genre"
-            value={formData.genre}
+            name="genreId"
+            value={formData.genreId}
             onChange={handleInputChange}
+            placeholder="urn:uuid:example-genre-id"
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
+            required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Release Date</label>
+          <label className="block text-sm font-medium mb-1">Release Date *</label>
           <input
             type="date"
             name="releaseDate"
-            value={formData.releaseDate ? formData.releaseDate.split("T")[0] : ""}
+            value={formData.releaseDate}
             onChange={handleInputChange}
             className="w-full px-4 py-2 bg-gray-400 rounded border border-gray-600"
+            required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
+          <label className="block text-sm font-medium mb-1">Price *</label>
           <input
             type="number"
             name="price"
             value={formData.price}
             onChange={handleInputChange}
+            placeholder="Price in cents/smallest currency unit"
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
+            required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Duration</label>
+          <label className="block text-sm font-medium mb-1">Duration (seconds) *</label>
           <input
             type="number"
             name="duration"
-            placeholder="example 1m:60, 2m:120, 3m:180.... "
+            placeholder="Duration in seconds (e.g., 180 for 3 minutes)"
             value={formData.duration}
             onChange={handleInputChange}
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
+            required
           />
         </div>
 
@@ -363,7 +438,7 @@ export default function UploadSong() {
           type="submit"
           className="w-full mt-6 bg-green-500 hover:bg-green-600 text-white py-2 rounded disabled:bg-gray-400"
         >
-          {isHandlingUploading ? "Uploading..." : "Upload"}
+          {isHandlingUploading ? "Uploading..." : "Upload Song"}
         </button>
       </form>
     </div>

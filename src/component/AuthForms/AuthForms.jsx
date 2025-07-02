@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios"
@@ -19,6 +19,7 @@ const AuthForms = () => {
     last_name: "",
     username: '',
     email: '',
+    phone_number: '',
     password: '',
     confirm_password: '',
     rememberMe: false,
@@ -35,10 +36,6 @@ const AuthForms = () => {
 
   // Helper function to validate form data
   const validateForm = () => {
-    if (!formData.username.trim()) {
-      toast.error('Username is required');
-      return false;
-    }
     if (!formData.password.trim()) {
       toast.error('Password is required');
       return false;
@@ -56,6 +53,16 @@ const AuthForms = () => {
         toast.error('Last name is required');
         return false;
       }
+      if (!formData.phone.trim()) {
+        toast.error('Phone number is required');
+        return false;
+      }
+      // Basic phone validation
+      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+      if (!phoneRegex.test(formData.phone.replace(/\s+/g, ''))) {
+        toast.error('Please enter a valid phone number');
+        return false;
+      }
       if (formData.password !== formData.confirm_password) {
         toast.error('Passwords do not match');
         return false;
@@ -70,20 +77,21 @@ const AuthForms = () => {
 
   // Helper function to store user data
   const storeUserData = (result) => {
-    console.log("Result1:",  `${isLogin? result.user.username : result.username}`);
+    console.log("Result1:", `${isLogin ? result.user.username : result.username}`);
     try {
       const now = new Date().getTime();
       const threeDays = 1000 * 60 * 60 * 24 * 3;
       const expiredAt = now + threeDays;
 
       const userData = {
-        token: `${isLogin? result.token :  result.ID}`,
-        id: `${isLogin? result.user.ID :  result.ID}`,
-        username: `${isLogin? result.user.username : result.username}`,
-        subscription_status: `${ isLogin? result.user.subscription_status : result.subscription_status}`,
-        email: `${isLogin? result.user.email : result.email}`,
-        first_name: `${isLogin? result.user.first_name : result.first_name}`,
-        last_name: `${isLogin?  result.user.last_name :  result.last_name}`,
+        token: `${isLogin ? result.token : result.ID}`,
+        id: `${isLogin ? result.user.ID : result.ID}`,
+        username: `${isLogin ? result.user.username : result.username}`,
+        subscription_status: `${isLogin ? result.user.subscription_status : result.subscription_status}`,
+        email: `${isLogin ? result.user.email : result.email}`,
+        first_name: `${isLogin ? result.user.first_name : result.first_name}`,
+        last_name: `${isLogin ? result.user.last_name : result.last_name}`,
+        phone: `${isLogin ? result.user.phone : result.phone}`,
         expiredAt: expiredAt
       };
 
@@ -112,7 +120,7 @@ const AuthForms = () => {
       if (isLogin) {
         endpoint = `${publicApiUrl}login`;
         requestData = {
-          username: formData.username,
+          email: formData.email,
           password: formData.password
         };
       } else {
@@ -120,6 +128,7 @@ const AuthForms = () => {
         requestData = {
           username: formData.username,
           email: formData.email,
+          phone: formData.phone_number,
           password: formData.password,
           confirm_password: formData.confirm_password,
           first_name: formData.first_name,
@@ -129,7 +138,8 @@ const AuthForms = () => {
       }
 
       const response = await axios.post(endpoint, requestData);
-      
+      console.log("response:", response)
+
 
       // Check if response is ok first
       if (![200, 201].includes(response.status)) {
@@ -137,20 +147,20 @@ const AuthForms = () => {
         return;
       }
 
-      const result = isLogin ? response.data : response.data.Data
+      const result = isLogin ? response.data.Data : response.data
 
       // Check if the response contains the expected data
       if (isLogin) {
         if (result.token && result.user) {
           storeUserData(result);
         } else {
-          toast.error(response.error || response.message || 'Authentication failed');
+          toast.error(response.data.message || response.message || 'Authentication failed');
         }
       } else {
         if (result?.ID && result?.username) {
           storeUserData(result);
         } else {
-          toast.error(response.error || response.message || 'Authentication failed');
+          toast.error(response.data.message || response.message || 'Authentication failed');
         }
       }
 
@@ -178,6 +188,7 @@ const AuthForms = () => {
       last_name: "",
       username: '',
       email: '',
+      phone: '',
       password: '',
       confirm_password: '',
       rememberMe: false,
@@ -248,28 +259,46 @@ const AuthForms = () => {
             }
 
             {/* Username Field */}
+            {
+              !isLogin && (
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                    required
+                  />
+                </div>
+              )
+            }
+
+            {/* Email Field (only for signup) */}
             <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
                 onChange={handleInputChange}
                 className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
                 required
               />
             </div>
 
-            {/* Email Field (only for signup) */}
+            {/* Phone Field (only for signup) */}
             {!isLogin && (
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={formData.email}
+                  type="tel"
+                  name="phone_number"
+                  placeholder="Phone Number"
+                  value={formData.phone_number}
                   onChange={handleInputChange}
                   className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
                   required

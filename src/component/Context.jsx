@@ -48,11 +48,11 @@ export const AppProvider = ({children}) => {
     checkIsAuthenticated()
   }, []);
 
-  //   useEffect(() => {
-  //   if (!userData.token) {
-  //     router.replace("/signup");
-  //   }
-  // }, []);
+    useEffect(() => {
+    if (!userData.token) {
+      router.replace("/signup");
+    }
+  }, []);
 
   const logoutUser = () =>{
     if(typeof window !== "undefined"){
