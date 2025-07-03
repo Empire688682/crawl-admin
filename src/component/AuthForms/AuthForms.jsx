@@ -95,7 +95,7 @@ const AuthForms = () => {
         expiredAt: expiredAt
       };
 
-      localStorage.setItem("CrawlAdmin", JSON.stringify(userData));
+      localStorage.setItem("CrawlUser", JSON.stringify(userData));
       toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
 
       // Small delay to show success message before reload

@@ -13,8 +13,8 @@ export const AppProvider = ({children}) => {
 
   const [userData, setUserData] = useState({});
   const [totalSongByUser, setTotalSongByUser] = useState(0);
-
   const [userSongs, setUserSongs] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   useEffect(() => {
     setShowMenu(false);
@@ -32,15 +32,17 @@ export const AppProvider = ({children}) => {
   const checkIsAuthenticated = () =>{
     const now = new Date().getTime();
     if(typeof window !== "undefined"){
-      const savedData = localStorage.getItem("CrawlAdmin");
+      const savedData = localStorage.getItem("CrawlUser");
       const parseData = savedData? JSON.parse(savedData) : null
       if(now > parseData?.expiredAT ){
-        localStorage.removeItem(CrawlUser)
+        localStorage.removeItem("CrawlUser");
+        setUserData({});
       }
       else{
-        setUserData(parseData);
+        setUserData(parseData || {});
       }
     }
+    setIsInitialized(true);
   }
 
   //Auths
@@ -48,15 +50,33 @@ export const AppProvider = ({children}) => {
     checkIsAuthenticated()
   }, []);
 
-    useEffect(() => {
+  // Define public routes that don't require authentication
+  const publicRoutes = ['/signup', '/login', '/'];
+  
+  // Only redirect after initialization is complete
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const isPublicRoute = publicRoutes.includes(pathname);
+    
     if (!userData.token) {
-      router.replace("/signup");
+      // User is not authenticated
+      if (!isPublicRoute) {
+        router.replace("/signup");
+      }
+    } else {
+      // User is authenticated
+      if (isPublicRoute) {
+        // Only redirect to dashboard if user is on a public route
+        router.replace("/dashboard");
+      }
+      // If user is on a protected route, let them stay there
     }
-  }, []);
+  }, [userData, pathname, router, isInitialized]);
 
   const logoutUser = () =>{
     if(typeof window !== "undefined"){
-      localStorage.removeItem("CrawlAdmin");
+      localStorage.removeItem("CrawlUser");
       window.location.reload();
     }
   };
@@ -64,6 +84,7 @@ export const AppProvider = ({children}) => {
   const fetchAllSongs = async () => {
     try {
       const res = await axios.get(publicApiUrl + "songs");
+      console.log("songs:",res )
       if (res.status === 200) {
         const fetched = res.data.data;
         if (userData?.id) {
@@ -102,7 +123,6 @@ export const AppProvider = ({children}) => {
     {children}
     </AppContext.Provider>
 }
-
 
 export const useGlobalContext = () => {
   return React.useContext(AppContext);

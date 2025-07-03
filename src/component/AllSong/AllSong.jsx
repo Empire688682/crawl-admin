@@ -16,8 +16,6 @@ export default function AllSong() {
     fetchAllSongs()
   },[loading]);
 
-  
-
   return (
     <div className="flex-1 p-6 text-white bg-[#0f0f0f]">
       <div className="flex justify-between items-center mb-4">
