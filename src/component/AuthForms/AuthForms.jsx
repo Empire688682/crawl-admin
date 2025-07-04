@@ -18,6 +18,7 @@ const AuthForms = () => {
     first_name: "",
     last_name: "",
     username: '',
+    artistName: '',
     email: '',
     phone_number: '',
     password: '',
@@ -53,16 +54,24 @@ const AuthForms = () => {
         toast.error('Last name is required');
         return false;
       }
-      if (!formData.phone.trim()) {
+      if (!formData.username.trim()) {
+        toast.error('Username is required');
+        return false;
+      }
+      if (!formData.artistName.trim()) {
+        toast.error('Artist name is required');
+        return false;
+      }
+      if (!formData.phone_number.trim()) {
         toast.error('Phone number is required');
         return false;
       }
-      // Basic phone validation
-      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-      if (!phoneRegex.test(formData.phone.replace(/\s+/g, ''))) {
-        toast.error('Please enter a valid phone number');
-        return false;
-      }
+      // // Basic phone validation
+      // const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+      // if (!phoneRegex.test(formData.phone_number.replace(/\s+/g, ''))) {
+      //   toast.error('Please enter a valid phone number');
+      //   return false;
+      // }
       if (formData.password !== formData.confirm_password) {
         toast.error('Passwords do not match');
         return false;
@@ -127,6 +136,7 @@ const AuthForms = () => {
         endpoint = `${publicApiUrl}users`;
         requestData = {
           username: formData.username,
+          artistName: formData.artistName,
           email: formData.email,
           phone: formData.phone_number,
           password: formData.password,
@@ -138,8 +148,7 @@ const AuthForms = () => {
       }
 
       const response = await axios.post(endpoint, requestData);
-      console.log("response:", response)
-
+      console.log("response:", response);
 
       // Check if response is ok first
       if (![200, 201].includes(response.status)) {
@@ -147,7 +156,40 @@ const AuthForms = () => {
         return;
       }
 
-      const result = isLogin ? response.data.Data : response.data
+      const result = isLogin ? response.data.data : response.data.data
+
+      console.log("result:", result);
+      if (result.user) {
+        const artisData = {
+          userId: result.user.userId,
+          artistName: formData.artistName
+        }
+        try {
+          const artistResponse = await axios.post(publicApiUrl + "artists",
+            artisData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${result.token}`
+              }
+            });
+
+          console.log("artistResponse:", artistResponse);
+          if (artistResponse.data.code === 200) {
+            const artistData = {
+              data: artistResponse.data.data,
+              token: result.token
+            };
+            localStorage.setItem("artistData:", JSON.stringify(artistData));
+            toast.success(artistResponse.data.message);
+          }
+          return
+        } catch (error) {
+          console.log("artistResponse:", error);
+          toast.error(error.reponse.data.message);
+        }
+      }
+      return
 
       // Check if the response contains the expected data
       if (isLogin) {
@@ -173,7 +215,7 @@ const AuthForms = () => {
       } else if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
         toast.error('Invalid response from server');
       } else {
-        toast.error(error.response.data.error || error.response.data.Message);
+        toast.error(error.response.data.message || error.response.data.Message);
       }
     } finally {
       setLoading(false);
@@ -187,8 +229,9 @@ const AuthForms = () => {
       first_name: "",
       last_name: "",
       username: '',
+      artistName: "",
       email: '',
-      phone: '',
+      phone_number: '',
       password: '',
       confirm_password: '',
       rememberMe: false,
@@ -222,46 +265,43 @@ const AuthForms = () => {
           </h1>
 
           <div className="space-y-6">
-            {/* First Name Field */}
+            {/* First Name & Last Name Field */}
             {
               !isLogin && (
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    name="first_name"
-                    placeholder="First name"
-                    value={formData.first_name}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
-                    required
-                  />
+                <div className="flex gap-2 w-full items-center">
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      name="first_name"
+                      placeholder="First name"
+                      value={formData.first_name}
+                      onChange={handleInputChange}
+                      className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      name="last_name"
+                      placeholder="Last name"
+                      value={formData.last_name}
+                      onChange={handleInputChange}
+                      className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                      required
+                    />
+                  </div>
                 </div>
               )
             }
 
-            {/* Last Name Field */}
+            {/* Username & Artist Field */}
             {
               !isLogin && (
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    name="last_name"
-                    placeholder="Last name"
-                    value={formData.last_name}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
-                    required
-                  />
-                </div>
-              )
-            }
-
-            {/* Username Field */}
-            {
-              !isLogin && (
-                <div className="relative">
+                <div className="flex gap-2 w-full items-center">
+                  <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
@@ -272,6 +312,20 @@ const AuthForms = () => {
                     className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
                     required
                   />
+                </div>
+
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    name="artistName"
+                    placeholder="Artist name"
+                    value={formData.artistName}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                    required
+                  />
+                </div>
                 </div>
               )
             }
