@@ -8,7 +8,7 @@ import { useGlobalContext } from "../Context";
 import axios from "axios";
 
 export default function UploadSong() {
-  const { userData, router } = useGlobalContext();
+  const { userData, artistData, router } = useGlobalContext();
 
   const [isAlbum, setIsAlbum] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,7 +18,8 @@ export default function UploadSong() {
     releaseDate: "",
     price: "",
     duration: "",
-    artists_names: [""], // Array of artist names
+    artists_names: [""],
+    lyrics: "" // Array of artist names
   });
 
   const [coverArt, setCoverArt] = useState(null);
@@ -152,18 +153,18 @@ export default function UploadSong() {
   const handleUploadSong = async (e) => {
     e.preventDefault();
     setIsHandlingUploading(true);
-
     // Validation
     if (
       !formData.title ||
       !userData.token ||
-      !userData.id ||
-      !formData.genreId ||
+      !artistData.ID ||
+      //!formData.genreId ||
       !formData.price ||
       !formData.duration ||
       !audioFile ||
       !formData.releaseDate ||
       !coverArt ||
+      !formData.lyrics ||
       !formData.artists_names.some(name => name.trim())
     ) {
       setIsHandlingUploading(false);
@@ -174,17 +175,19 @@ export default function UploadSong() {
       // Format data according to backend expectations
       const uploadData = {
         title: formData.title,
-        artistId: userData?.id, // Use artistId instead of artist_id
+        artistId: "urn:uuid:" + artistData?.ID, // Use artistId instead of artist_id
         artists_names: formData.artists_names.filter(name => name.trim()), // Filter out empty names
         duration: Number(formData.duration),
-        audioUrl: audioFile, // Use audioUrl instead of audio_url
-        genreId: formData.genreId, // Use genreId instead of genre
+        audioUrl: audioFile, 
+        genreId: "", // formData.genreId, 
         price: Number(formData.price),
-        releaseDate: formData.releaseDate, // Use releaseDate instead of release_date
-        albumId: formData.albumId || null, // Use albumId instead of album_id
-        previewUrl: previewUrl, // Add previewUrl
-        coverImageUrl: coverArt, // Use coverImageUrl instead of cover_art
+        lyrics: formData.lyrics,
+        releaseDate: new Date(formData.releaseDate).toISOString(), 
+        albumId: "", //formData.albumId
+        previewUrl: previewUrl,
+        coverImageUrl: coverArt,
       };
+      console.log("uploadData:", uploadData);
 
       const res = await axios.post(
         process.env.NEXT_PUBLIC_API_URL + "songs",
@@ -197,6 +200,8 @@ export default function UploadSong() {
         }
       );
 
+      console.log("res:", res)
+
       if (res.status === 201) {
         // Reset form
         setFormData({
@@ -207,6 +212,7 @@ export default function UploadSong() {
           price: "",
           duration: "",
           artists_names: [""],
+          lyrics: ""
         });
         setAudioFile(null);
         setAudioPreview(null);
@@ -382,7 +388,7 @@ export default function UploadSong() {
           </div>
         )}
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium mb-1">Genre ID *</label>
           <input
             name="genreId"
@@ -392,7 +398,7 @@ export default function UploadSong() {
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
             required
           />
-        </div>
+        </div> */}
 
         <div>
           <label className="block text-sm font-medium mb-1">Release Date *</label>
@@ -430,6 +436,19 @@ export default function UploadSong() {
             className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-600"
             required
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Lyrics*</label>
+          <textarea 
+          name="lyrics" 
+          id="" 
+          cols="30" 
+          rows="4"
+          placeholder="Song lyrics"
+          className="w-full resize-none px-4 py-2 bg-gray-800 rounded border border-gray-600"
+          onChange={handleInputChange}
+          value={formData.lyrics}>
+          </textarea>
         </div>
 
         {/* Submit */}
