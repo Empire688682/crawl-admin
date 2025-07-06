@@ -12,6 +12,7 @@ export const AppProvider = ({children}) => {
   const router = useRouter();
 
   const [userData, setUserData] = useState({});
+  const [artistData, setArtistData] = useState({});
   const [totalSongByUser, setTotalSongByUser] = useState(0);
   const [userSongs, setUserSongs] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -32,14 +33,21 @@ export const AppProvider = ({children}) => {
   const checkIsAuthenticated = () =>{
     const now = new Date().getTime();
     if(typeof window !== "undefined"){
-      const savedData = localStorage.getItem("CrawlUser");
-      const parseData = savedData? JSON.parse(savedData) : null
-      if(now > parseData?.expiredAT ){
-        localStorage.removeItem("CrawlUser");
+      const savedUserData = localStorage.getItem("crawlUser");
+      const parseUserData = savedUserData? JSON.parse(savedUserData) : null;
+
+      const savedArtistData = localStorage.getItem("crawlArtist");
+      const parseArtistData = savedArtistData? JSON.parse(savedArtistData) : null;
+      if(now > parseUserData?.expiredAT ){
+        localStorage.removeItem("crawlUser");
+        localStorage.removeItem("crawlArtist");
+        localStorage.removeItem("crawlToken");
         setUserData({});
+        setArtistData({});
       }
       else{
-        setUserData(parseData || {});
+        setUserData(parseUserData || {});
+        setArtistData(parseArtistData || {})
       }
     }
     setIsInitialized(true);
@@ -72,12 +80,14 @@ export const AppProvider = ({children}) => {
       }
       // If user is on a protected route, let them stay there
     }
-  }, [userData, pathname, router, isInitialized]);
+  }, [userData, artistData, pathname, router, isInitialized]);
 
   const logoutUser = () =>{
     if(typeof window !== "undefined"){
-      localStorage.removeItem("CrawlUser");
-      window.location.reload();
+        localStorage.removeItem("crawlUser");
+        localStorage.removeItem("crawlArtist");
+        localStorage.removeItem("crawlToken");
+      checkIsAuthenticated();
     }
   };
 
@@ -113,6 +123,7 @@ export const AppProvider = ({children}) => {
     router,
     publicApiUrl,
     userData,
+    artistData,
     userSongs,
     fetchAllSongs,
     logoutUser,

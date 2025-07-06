@@ -104,7 +104,9 @@ const AuthForms = () => {
         expiredAt: expiredAt
       };
 
-      localStorage.setItem("CrawlUser", JSON.stringify(userData));
+      localStorage.setItem("crawlUser", JSON.stringify(userData));
+      localStorage.setItem("crawlToken", JSON.stringify(result.token));
+      localStorage.setItem("crawlArtist", JSON.stringify(result.artist));
       toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
 
       // Small delay to show success message before reload
@@ -156,10 +158,9 @@ const AuthForms = () => {
         return;
       }
 
-      const result = isLogin ? response.data.data : response.data.data
-
+      const result =  response.data.data;
       console.log("result:", result);
-      if (result.user) {
+      if (!result.user.is_artist) {
         const artisData = {
           userId: result.user.userId,
           artistName: formData.artistName
@@ -175,22 +176,14 @@ const AuthForms = () => {
             });
 
           console.log("artistResponse:", artistResponse);
-          if (artistResponse.data.code === 200) {
-            const artistData = {
-              data: artistResponse.data.data,
-              token: result.token
-            };
-            localStorage.setItem("artistData:", JSON.stringify(artistData));
-            toast.success(artistResponse.data.message);
+          if (artistResponse.data.code !== 200) {
+            return
           }
-          return
         } catch (error) {
           console.log("artistResponse:", error);
           toast.error(error.reponse.data.message);
         }
       }
-      return
-
       // Check if the response contains the expected data
       if (isLogin) {
         if (result.token && result.user) {

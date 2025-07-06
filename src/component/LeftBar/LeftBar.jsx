@@ -5,8 +5,8 @@ import { FiHome, FiMusic, FiBarChart2, FiUpload, FiLogOut } from 'react-icons/fi
 import { useGlobalContext } from '../Context';
 
 export default function LeftBar() {
-  const {showMenu, pathname, setShowMenu, userData, logoutUser} = useGlobalContext();
-  const firstInitial = userData?.username?.trim()?.charAt(0)?.toUpperCase() || "";
+  const {showMenu, pathname, artistData, userData, logoutUser} = useGlobalContext();
+  const firstInitial = artistData?.artist_name?.trim()?.charAt(0)?.toUpperCase() || "";
 
   return (
     <div className={`w-64 transition h-screen duration-1000 md:translate-x-0 transform ${showMenu ? "translate-x-0 pb-16" : "translate-x-[-140%]"} bg-[#121212] fixed z-50 md:relative text-white flex flex-col justify-between py-6 px-4`}>
@@ -16,7 +16,7 @@ export default function LeftBar() {
         <div className="flex h-12 w-12 items-center text-black justify-center rounded-full bg-white text-lg font-bold uppercase">
           {firstInitial}
         </div>
-          <span className="text-lg font-semibold">{userData?.username}</span>
+          <span className="text-lg font-semibold">{artistData?.artist_name}</span>
         </div>
 
         <nav className="flex flex-col space-y-4 gap-9">
