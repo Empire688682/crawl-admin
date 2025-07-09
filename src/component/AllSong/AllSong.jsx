@@ -6,6 +6,8 @@ export default function AllSong() {
   const { userSongs, fetchArtistSongs } = useGlobalContext();
   const [loading, setLoading] = useState(true);
 
+  console.log("userSongs:", userSongs);
+
   useEffect(()=>{
     if(userSongs){
       setLoading(false)
