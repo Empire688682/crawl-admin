@@ -99,6 +99,7 @@ export const AppProvider = ({children}) => {
       if (res.status === 200) {
         const songs = res.data.data;
         setUserSongs(songs);
+        setTotalSongByUser(songs.length);
       } else {
         setUserSongs([]);
       }
@@ -106,6 +107,10 @@ export const AppProvider = ({children}) => {
       console.error("fetchArtistSongs error:", err);
     }
   };
+
+  useEffect(()=>{
+    fetchArtistSongs();
+  },[artistData])
   
   return <AppContext.Provider value={{
     showMenu, 
