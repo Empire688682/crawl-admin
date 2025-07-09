@@ -91,30 +91,21 @@ export const AppProvider = ({children}) => {
     }
   };
 
-  const fetchAllSongs = async () => {
+  const fetchArtistSongs = async () => {
+    if(!artistData?.ID) return;
     try {
-      const res = await axios.get(publicApiUrl + "songs");
+      const res = await axios.get(publicApiUrl + `artists/${artistData.ID}/songs?page=1&limit=20`);
       console.log("songs:",res )
       if (res.status === 200) {
-        const fetched = res.data.data;
-        if (userData?.id) {
-          const filtered = fetched.filter(
-            (song) => song.artist_id === userData.id
-          );
-           setTotalSongByUser(filtered.length);
-          setUserSongs(filtered);
-        }
+        const songs = res.data.data;
+        setUserSongs(songs);
       } else {
         setUserSongs([]);
       }
     } catch (err) {
-      console.error("fetchAllSongs error:", err);
+      console.error("fetchArtistSongs error:", err);
     }
   };
-
-  useEffect(() => {
-    fetchAllSongs();
-  }, [userData]);
   
   return <AppContext.Provider value={{
     showMenu, 
@@ -125,7 +116,7 @@ export const AppProvider = ({children}) => {
     userData,
     artistData,
     userSongs,
-    fetchAllSongs,
+    fetchArtistSongs,
     logoutUser,
     checkIsAuthenticated,
     totalSongByUser, 

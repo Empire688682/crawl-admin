@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useGlobalContext } from "../Context";
 
 export default function AllSong() {
-  const { userSongs, fetchAllSongs } = useGlobalContext();
+  const { userSongs, fetchArtistSongs } = useGlobalContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
@@ -13,7 +13,7 @@ export default function AllSong() {
   },[userSongs]);
 
   useEffect(()=>{
-    fetchAllSongs()
+    fetchArtistSongs()
   },[loading]);
 
   return (
