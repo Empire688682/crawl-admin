@@ -26,6 +26,9 @@ export default function LeftBar() {
           <Link href="/all-songs" className={`flex items-center space-x-2 text-sm hover:text-white text-gray-500 ${pathname === "/all-songs"? "font-bold text-white" : ""}`}>
             <FiMusic className='text-2xl' /> <span>All Songs/Purchased Songs</span>
           </Link>
+          <Link href="/all-albums" className={`flex items-center space-x-2 text-sm hover:text-white text-gray-500 ${pathname === "/all-albums"? "font-bold text-white" : ""}`}>
+            <FiMusic className='text-2xl' /> <span>All Albums/Purchased Songs</span>
+          </Link>
           <Link href="/revenue-dashboard" className={`flex items-center space-x-2 text-sm hover:text-white text-gray-500 ${pathname === "/revenue-dashboard"? "font-bold text-white" : ""}`}>
             <FiBarChart2 className='text-2xl' /> <span>Monthly Revenue / Lifetime Revenue</span>
           </Link>

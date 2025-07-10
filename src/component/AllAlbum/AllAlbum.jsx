@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "../Context";
 
-export default function AllSong() {
+export default function AllAlbum() {
   const { userSongs, fetchArtistSongs, router } = useGlobalContext();
   const [loading, setLoading] = useState(true);
   const landingPageUrl = process.env.NEXT_PUBLIC_LANDING_PAGE_URL
@@ -26,7 +26,7 @@ export default function AllSong() {
   return (
     <div className="flex-1 p-6 text-white bg-[#0f0f0f]">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">All Songs / Purchased Songs</h2>
+        <h2 className="text-xl font-semibold">All Albums / Purchased Albums</h2>
         <div className="space-x-4">
           <button className="text-sm text-gray-400 hover:text-white">Filter</button>
           <button className="text-sm text-gray-400 hover:text-white">Sort</button>
@@ -37,7 +37,7 @@ export default function AllSong() {
         <table className="min-w-full text-left">
           <thead className="text-gray-400 border-b border-gray-700">
             <tr>
-              <th className="py-3">Song Title</th>
+              <th className="py-3">Album Title</th>
               <th className="py-3 hidden md:block">Upload Date</th>
               <th className="py-3">Total Purchases</th>
               <th className="py-3 pr-3">Status</th>
