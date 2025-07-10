@@ -89,7 +89,7 @@ const AuthForms = () => {
     console.log("Result1:", `${isLogin ? result.user.username : result.username}`);
     try {
       const now = new Date().getTime();
-      const threeDays = 1000 * 60 * 60 * 24 * 3;
+      const threeDays = 1000 * 60 * 60 * 24;
       const expiredAt = now + threeDays;
 
       const userData = {
@@ -158,9 +158,16 @@ const AuthForms = () => {
         return;
       }
 
-      const result =  response.data.data;
+      // Check if the response contains the expected data
+      const result = response.data.data;
       console.log("result:", result);
-      if (!result.user.is_artist) {
+      if (isLogin) {
+        if (result.token && result.user) {
+          storeUserData(result);
+        } else {
+          toast.error(response.data.message || response.message || 'Authentication failed');
+        }
+      } else {
         const artisData = {
           userId: result.user.userId,
           artistName: formData.artistName
@@ -177,26 +184,34 @@ const AuthForms = () => {
 
           console.log("artistResponse:", artistResponse);
           if (artistResponse.data.code !== 200) {
-            return
+            toast.error("An error occured, try again later");
           }
+          setFormData({
+            first_name: "",
+            last_name: "",
+            username: '',
+            artistName: "",
+            email: '',
+            phone_number: '',
+            password: '',
+            confirm_password: '',
+            rememberMe: false,
+            agreeToTerms: false
+          });
+          toast.success("Signup successfully, Login to countinue");
+          setTimeout(() => {
+            setIsLogin(true);
+          }, 1000);
         } catch (error) {
           console.log("artistResponse:", error);
           toast.error(error.reponse.data.message);
         }
-      }
-      // Check if the response contains the expected data
-      if (isLogin) {
-        if (result.token && result.user) {
-          storeUserData(result);
-        } else {
-          toast.error(response.data.message || response.message || 'Authentication failed');
-        }
-      } else {
-        if (result?.ID && result?.username) {
-          storeUserData(result);
-        } else {
-          toast.error(response.data.message || response.message || 'Authentication failed');
-        }
+
+        // if (result?.ID && result?.username) {
+        //   storeUserData(result);
+        // } else {
+        //   toast.error("2",response.data.message || response.message || 'Authentication failed');
+        // }
       }
 
     } catch (error) {
@@ -295,30 +310,30 @@ const AuthForms = () => {
               !isLogin && (
                 <div className="flex gap-2 w-full items-center">
                   <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
-                    required
-                  />
-                </div>
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                      required
+                    />
+                  </div>
 
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    name="artistName"
-                    placeholder="Artist name"
-                    value={formData.artistName}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
-                    required
-                  />
-                </div>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      name="artistName"
+                      placeholder="Artist name"
+                      value={formData.artistName}
+                      onChange={handleInputChange}
+                      className="w-full bg-gray-800 text-white pl-12 pr-4 py-3 rounded-lg border border-gray-700 focus:border-gray-600 focus:outline-none"
+                      required
+                    />
+                  </div>
                 </div>
               )
             }
