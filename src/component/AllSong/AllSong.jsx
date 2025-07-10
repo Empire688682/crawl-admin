@@ -34,7 +34,9 @@ export default function AllSong() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full text-left">
+        {
+          userSongs && userSongs.length > 0 ?
+          <table className="min-w-full text-left">
           <thead className="text-gray-400 border-b border-gray-700">
             <tr>
               <th className="py-3">Song Title</th>
@@ -76,11 +78,18 @@ export default function AllSong() {
                 ))}
           </tbody>
         </table>
+        :
+        <p>No song available</p>
+        }
       </div>
 
-      <div className="mt-4 text-sm text-gray-400 hover:text-white cursor-pointer">
+      {
+        userSongs.length > 0 && (
+          <div className="mt-4 text-sm text-gray-400 hover:text-white cursor-pointer">
         View all ⌄
-      </div>
+        </div>
+        )
+      }
     </div>
   );
 }

@@ -2,11 +2,11 @@
 import { useGlobalContext } from "../Context"
 
 export default function Dashboard() {
-  const {totalSongByUser} = useGlobalContext();
+  const {totalSongByUser, userAlbums} = useGlobalContext();
     return (
       <div className="flex-1 p-8 bg-[#0e0e0e] text-white w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <StatCard title="Total Songs Uploaded" value={totalSongByUser} sub={`${totalSongByUser} Singles`} />
+          <StatCard title="Total Songs Uploaded" value={totalSongByUser} sub={`${totalSongByUser} Singles, ${userAlbums.length} Albums`} />
           <StatCard title="Total Purchases" value="0" sub={""/*+12% from last month*/} />
           <StatCard title="Revenue This Month" value="₦0" sub={""/**+8% from last month */} />
           <StatCard title="All-time Revenue" value="₦0" sub={""/**Since November 2024 */} />

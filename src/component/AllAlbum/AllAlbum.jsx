@@ -3,23 +3,24 @@ import { useEffect, useState } from "react";
 import { useGlobalContext } from "../Context";
 
 export default function AllAlbum() {
-  const { userSongs, fetchArtistSongs, router } = useGlobalContext();
+  const { userAlbums, fetchArtistAlbums, router } = useGlobalContext();
   const [loading, setLoading] = useState(true);
   const landingPageUrl = process.env.NEXT_PUBLIC_LANDING_PAGE_URL
 
-  console.log("userSongs:", userSongs);
+  console.log("userAlbums:", userAlbums);
 
   useEffect(()=>{
-    if(userSongs){
+    if(userAlbums){
       setLoading(false)
     }
-  },[userSongs]);
+  },[userAlbums]);
 
   useEffect(()=>{
-    fetchArtistSongs()
+    fetchArtistAlbums()
   },[loading]);
 
   const takeMeToLandingPage = (ID) =>{
+    return;
     router.push(`${landingPageUrl}${ID}`)
   }
 
@@ -53,7 +54,7 @@ export default function AllAlbum() {
                     <td className="py-3 pr-3">--</td>
                   </tr>
                 ))
-              : userSongs.map((song, i) => (
+              : userAlbums.map((song, i) => (
                   <tr
                     key={song.ID}
                     className="border-b border-gray-800 hover:bg-gray-900 transition"

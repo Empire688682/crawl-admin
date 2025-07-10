@@ -15,6 +15,7 @@ export const AppProvider = ({children}) => {
   const [artistData, setArtistData] = useState({});
   const [totalSongByUser, setTotalSongByUser] = useState(0);
   const [userSongs, setUserSongs] = useState([]);
+  const [userAlbums, setUserAlbums] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
   
   useEffect(() => {
@@ -108,6 +109,23 @@ export const AppProvider = ({children}) => {
     }
   };
 
+  const fetchArtistAlbums = async () => {
+    if(!artistData?.ID) return;
+    try {
+      const res = await axios.get(publicApiUrl + `artists/${artistData.ID}/albums?page=1&limit=20`);
+      console.log("songs:",res )
+      if (res.status === 200) {
+        const songs = res.data.data;
+        setUserAlbums(songs);
+        setTotalSongByUser(songs.length);
+      } else {
+        setUserAlbums([]);
+      }
+    } catch (err) {
+      console.error("fetchArtistAlbums error:", err);
+    }
+  };
+
   useEffect(()=>{
     fetchArtistSongs();
   },[artistData])
@@ -122,6 +140,8 @@ export const AppProvider = ({children}) => {
     artistData,
     userSongs,
     fetchArtistSongs,
+    userAlbums, 
+    fetchArtistAlbums,
     logoutUser,
     checkIsAuthenticated,
     totalSongByUser, 
