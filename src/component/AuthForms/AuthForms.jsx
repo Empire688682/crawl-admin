@@ -86,28 +86,26 @@ const AuthForms = () => {
 
   // Helper function to store user data
   const storeUserData = (result) => {
-    console.log("Result1:", `${isLogin ? result.user.username : result.username}`);
     try {
       const now = new Date().getTime();
       const threeDays = 1000 * 60 * 60 * 24;
       const expiredAt = now + threeDays;
 
       const userData = {
-        token: `${isLogin ? result.token : result.ID}`,
-        id: `${isLogin ? result.user.ID : result.ID}`,
-        username: `${isLogin ? result.user.username : result.username}`,
-        subscription_status: `${isLogin ? result.user.subscription_status : result.subscription_status}`,
-        email: `${isLogin ? result.user.email : result.email}`,
-        first_name: `${isLogin ? result.user.first_name : result.first_name}`,
-        last_name: `${isLogin ? result.user.last_name : result.last_name}`,
-        phone: `${isLogin ? result.user.phone : result.phone}`,
+        token: result.token,
+        id: result.user.ID,
+        username: result.user.username,
+        subscription_status: result.user.subscription_status,
+        email: result.user.email,
+        first_name: result.user.first_name,
+        last_name: result.user.last_name,
+        phone: result.user.phone || "",
         expiredAt: expiredAt
       };
 
       localStorage.setItem("crawlUser", JSON.stringify(userData));
       localStorage.setItem("crawlToken", JSON.stringify(result.token));
       localStorage.setItem("crawlArtist", JSON.stringify(result.artist));
-      toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
 
       // Small delay to show success message before reload
       setTimeout(() => {
@@ -120,54 +118,62 @@ const AuthForms = () => {
   };
 
 
+  const loginArtist = async (email, password) => {
+    if (!email || !password) return
+    const requestData = {
+      email: formData.email,
+      password: formData.password
+    };
+    setLoading(true);
+    try {
+      const response = await axios.post(`${publicApiUrl}login`, requestData);
+      const result = response.data.data;
+      console.log("result:", result);
+      if (!result.artist) return;
+      storeUserData(result);
+    } catch (error) {
+      console.log("loginArtist:", error);
+      toast.error(error.response.data.message || "An error occured");
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
+    if (isLogin) {
+      await loginArtist(formData.email, formData.password);
+      return;
+    }
+
     try {
       setLoading(true);
-
-      let endpoint, requestData;
-
-      if (isLogin) {
-        endpoint = `${publicApiUrl}login`;
-        requestData = {
-          email: formData.email,
-          password: formData.password
-        };
-      } else {
-        endpoint = `${publicApiUrl}users`;
-        requestData = {
-          username: formData.username,
-          artistName: formData.artistName,
-          email: formData.email,
-          phone: formData.phone_number,
-          password: formData.password,
-          confirm_password: formData.confirm_password,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          agreeToTerms: formData.agreeToTerms
-        };
+      const requestData = {
+        username: formData.username,
+        artistName: formData.artistName,
+        email: formData.email,
+        phone: formData.phone_number,
+        password: formData.password,
+        confirm_password: formData.confirm_password,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        agreeToTerms: formData.agreeToTerms
       }
 
-      const response = await axios.post(endpoint, requestData);
-      console.log("response:", response);
+      const response = await axios.post(`${publicApiUrl}users`, requestData);
 
       // Check if response is ok first
       if (![200, 201].includes(response.status)) {
         toast.error('Invalid request data');
         return;
-      }
+      };
 
-      // Check if the response contains the expected data
-      const result = response.data.data;
-      console.log("result:", result);
-      if (isLogin) {
-        if (result.token && result.user) {
-          storeUserData(result);
-        } else {
-          toast.error(response.data.message || response.message || 'Authentication failed');
-        }
-      } else {
+      const result = response.data.data
+      // check is user is an artist
+      if (!result.artist) {
         const artisData = {
           userId: result.user.userId,
           artistName: formData.artistName
@@ -182,10 +188,10 @@ const AuthForms = () => {
               }
             });
 
-          console.log("artistResponse:", artistResponse);
           if (artistResponse.data.code !== 200) {
             toast.error("An error occured, try again later");
           }
+          await loginArtist(formData.email, formData.password);
           setFormData({
             first_name: "",
             last_name: "",
@@ -198,33 +204,18 @@ const AuthForms = () => {
             rememberMe: false,
             agreeToTerms: false
           });
-          toast.success("Signup successfully, Login to countinue");
-          setTimeout(() => {
-            setIsLogin(true);
-          }, 1000);
+          if (!isLogin) {
+            toast.success("Signup successfully");
+          }
         } catch (error) {
           console.log("artistResponse:", error);
           toast.error(error.reponse.data.message);
         }
-
-        // if (result?.ID && result?.username) {
-        //   storeUserData(result);
-        // } else {
-        //   toast.error("2",response.data.message || response.message || 'Authentication failed');
-        // }
       }
 
     } catch (error) {
-      console.error(`${isLogin ? 'Login' : 'Signup'} error:`, error);
-
-      // More specific error handling
-      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-        toast.error('Network error - please check your connection');
-      } else if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
-        toast.error('Invalid response from server');
-      } else {
-        toast.error(error.response.data.message || error.response.data.Message);
-      }
+      console.error('SignupError:', error);
+      toast.error(error.response.data.message)
     } finally {
       setLoading(false);
     }
