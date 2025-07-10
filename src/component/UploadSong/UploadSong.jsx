@@ -179,12 +179,11 @@ export default function UploadSong() {
         duration: Number(formData.duration),
         audioUrl: audioFile,
         genreId: "6db4110f-cc55-4c7a-ad5e-2e13b192143f",
-        albumId: "8cdca3c1-5149-4d1a-9b73-c4018642cd45",
-        price: Number(formData.price),
+        //albumId: "8cdca3c1-5149-4d1a-9b73-c4018642cd45"        price: Number(formData.price),
         lyrics: formData.lyrics,
         releaseDate: new Date(formData.releaseDate).toISOString(),
         previewUrl: previewUrl,
-        coverImageUrl: coverArt,
+        coverImageUrl: coverArt
       };
 
       console.log("uploadData:", uploadData);
