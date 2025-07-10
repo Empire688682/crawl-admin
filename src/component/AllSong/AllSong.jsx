@@ -58,7 +58,7 @@ export default function AllSong() {
               : userSongs.map((song, i) => (
                   <tr
                     key={song.ID}
-                    className="border-b border-gray-800 hover:bg-gray-900 transition"
+                    className="border-b cursor-pointer border-gray-800 hover:bg-gray-900 transition"
                     onClick={()=>takeMeToLandingPage(song.ID)}
                   >
                     <td className="py-3">{song.title}</td>

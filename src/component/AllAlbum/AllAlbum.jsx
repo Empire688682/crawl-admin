@@ -59,14 +59,14 @@ export default function AllAlbum() {
                                     : userAlbums.map((song, i) => (
                                         <tr
                                             key={song.ID}
-                                            className="border-b border-gray-800 hover:bg-gray-900 transition"
+                                            className="border-b cursor-pointer border-gray-800 hover:bg-gray-900 transition"
                                             onClick={() => takeMeToLandingPage(song.ID)}
                                         >
                                             <td className="py-3">{song.title}</td>
                                             <td className="py-3 hidden md:block">
                                                 {new Date(song.created_at).toLocaleDateString()}
                                             </td>
-                                            <td className="py-3">{song.total_purchases || 0}</td>
+                                            <td className="py-3">{song.total_purchases}</td>
                                             <td className="py-3 pr-3">
                                                 <span
                                                     className={`px-2 py-1 rounded-full text-xs bg-green-700 text-white
